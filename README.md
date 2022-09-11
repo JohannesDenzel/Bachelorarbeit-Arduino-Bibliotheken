@@ -6,3 +6,4 @@ The SparkFun ... - Library was not written by me. For Licence see the Licence in
 The Link to the original source code ist:
 https://github.com/sparkfun/MAX30105_Particle_Sensor_Breakout/tree/master/Libraries/Arduino
 
+Dependencies: Wire Library for I2C
