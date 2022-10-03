@@ -9,6 +9,9 @@
 
 class RN4871_BLE
 {
+  private:
+	uint8_t debug_msg;
+  
   public:
 
     //Constructor
@@ -35,7 +38,7 @@ class RN4871_BLE
 	//    currently only implemented: ble_Service = "Service_transparent_UART" 
 	//const uint8_t echoOn - turn echo Mode on or off on ble Module: ble module sends back selected modes
 	//uint32_t timeout_ms - timeout waiting for ble module to answer. must be > 600 ms because of reboot time
-	uint8_t Init_BLE(const String ble_Service, uint32_t timeout_ms);
+	uint8_t Init_BLE(const String ble_Service, uint32_t timeout_ms, uint8_t debugMessages_ON);
 	
 	//get text from UART2 -> String that was sent by ble module 
 	String Get_BLE_String(void);

@@ -3,7 +3,7 @@
 
 //Constructor
 RN4871_BLE::RN4871_BLE(){
-  ;
+  debug_msg = 0;
 }
 
 
@@ -46,21 +46,28 @@ uint8_t RN4871_BLE::SendCommand(const char command[], const char expectedRespons
   uint8_t success = 0;
   uint8_t commandLength = strlen(command);
   uint8_t responseLength = strlen(expectedResponse);
-  Serial.print("send: ");
+  if(debug_msg == 1){
+	Serial.print("send: ");
+  }
   for(uint8_t chrID = 0; chrID < commandLength; chrID++){
     Serial2.write(command[chrID]);
     delay(5);
-    Serial.print(command[chrID]);
-    delay(5);
+	if(debug_msg == 1){
+		Serial.print(command[chrID]);
+	}
+		delay(5);
+	
   }
-  Serial.println();
-  
+  if(debug_msg == 1){
+	Serial.println();
+  }
 
   //wait until BLE responds
   String responseStr = Get_expected_BLE_Response(timeout_ms, expectedResponse);
   
-  Serial.println("RN4871_response:" + String(responseStr) + "\n" + "expected_response: " + String(expectedResponse) + "\n" +  "response_checked_substring: " + String(responseStr).substring(0,responseLength));
-
+  if(debug_msg == 1){
+	Serial.println("RN4871_response:" + String(responseStr) + "\n" + "expected_response: " + String(expectedResponse) + "\n" +  "response_checked_substring: " + String(responseStr).substring(0,responseLength));
+  }
 
   if(String(responseStr).substring(0,responseLength) == String(expectedResponse)){
     success = 1;
@@ -99,35 +106,47 @@ uint8_t RN4871_BLE::Reboot_BLE_Module(uint32_t timeout_ms){
 //    currently only implemented: ble_Service = "Service_transparent_UART" 
 //const uint8_t echoOn - turn echo Mode on or off on ble Module: ble module sends back selected modes
 //uint32_t timeout_ms - timeout waiting for ble module to answer. must be > 600 ms because of reboot time
-uint8_t RN4871_BLE::Init_BLE(const String ble_Service, uint32_t timeout_ms){
+uint8_t RN4871_BLE::Init_BLE(const String ble_Service, uint32_t timeout_ms, uint8_t debugMessages_ON){
   uint8_t success = 1;
 
    //if one function returns 0 success will be 0.
 
    //start command Mode
    success += RN4871_BLE::StartCMD_Mode(timeout_ms);
-   Serial.println("start CMD: " + String(success));
-
+   if(debug_msg == 1){
+	Serial.println("start CMD: " + String(success));
+   }
    
    //enable ECHO Mode
    success += RN4871_BLE::SendCommand("+\r", "ECHO ON", timeout_ms); //turn echo on
-   Serial.println("echo on: " + String(success));
-   
+   if(debug_msg == 1){
+	Serial.println("echo on: " + String(success));
+   }
 
 	
    if(ble_Service.equals(String("Service_transparent_UART")) == 1){
     //Select Service (transparent UART)
     success += RN4871_BLE::SendCommand("SS,C0\r", "SS,C0", timeout_ms);
-    Serial.println("config: " + String(success));
+	if(debug_msg == 1){
+		Serial.println("config: " + String(success));
+	}
    }
 
-   Serial.println("Rebooting BLE Module:");
+   if(debug_msg == 1){
+	Serial.println("Rebooting BLE Module:");
+   }
+   
    success += RN4871_BLE::Reboot_BLE_Module(timeout_ms);
-   Serial.println("reboot: " + String(success));
+   
+   if(debug_msg == 1){
+	Serial.println("reboot: " + String(success));
+   }
 
    //delay(10000); 
    if(success > 0){
-	Serial.println("try connecting to BLE Module");
+	if(debug_msg == 1){
+		Serial.println("try connecting to BLE Module");
+	}
    }
    
    return success;
