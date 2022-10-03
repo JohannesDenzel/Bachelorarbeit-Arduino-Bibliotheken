@@ -31,6 +31,9 @@ PulseDetector::PulseDetector(uint8_t fir_enable, uint8_t movingAvg_intervalSize,
   beatAvg = 0;
   
   useFallingEdge = beatOnFallingEdge_p;
+  
+  debugPrint_Offset = 0; //use as Offset value while printing out values for debug mode
+  debugPrint_ScalingFaktor = 1; //multiply values with this scaling faktor
 
   
   if(movingAvg_intervalSize > 0){
@@ -47,6 +50,15 @@ PulseDetector::PulseDetector(uint8_t fir_enable, uint8_t movingAvg_intervalSize,
 
 }
 
+//Set Scaling faktors for debug Print modes
+//raw uint16_t input value is multiplied with scalingFaktor
+//the offset is added to the result
+void PulseDetector::Set_DebugPrint_Faktors(uint16_t offset, float scalingFaktor, uint16_t zeroCrossing_MarkerHight){
+	debugPrint_Offset = offset; //use as Offset value while printing out values for debug mode
+	debugPrint_ScalingFaktor = scalingFaktor; //multiply values with this scaling faktor
+	beatDetected_MarkerHight = zeroCrossing_MarkerHight;
+}
+
 
 //  Returns true if a pulse is detected
 //  A running average of four samples is recommended for display on the screen.
@@ -56,6 +68,8 @@ PulseDetector::PulseDetector(uint8_t fir_enable, uint8_t movingAvg_intervalSize,
 bool PulseDetector::checkForPulse(uint16_t sample, float range_AC_Min, float range_AC_Max, uint8_t debug)
 {
   bool beatDetected = false;
+  
+  
 
   //  Save current state
   IR_AC_Signal_Previous = IR_AC_Signal_Current;
@@ -139,14 +153,16 @@ bool PulseDetector::checkForPulse(uint16_t sample, float range_AC_Min, float ran
     IR_AC_Signal_min = IR_AC_Signal_Current;
   }
   
+  //debugPrint_Offset = offset; //use as Offset value while printing out values for debug mode
+  //debugPrint_ScalingFaktor = scalingFaktor; //multiply values with this scaling faktor
   if(debug == 1){
-    Serial.print(String(IR_AC_Signal_Current) + " ");
-    Serial.print(String(IR_AC_Max) + " ");
-    Serial.print(String(IR_AC_Min) + " ");
-	Serial.print(String(beatDetected * 100) + " ");
+    Serial.print(String(debugPrint_ScalingFaktor * IR_AC_Signal_Current + debugPrint_Offset) + " ");
+    Serial.print(String(debugPrint_ScalingFaktor * IR_AC_Max + debugPrint_Offset) + " ");
+    Serial.print(String(debugPrint_ScalingFaktor * IR_AC_Min + debugPrint_Offset) + " ");
+	Serial.print(String(beatDetected * beatDetected_MarkerHight + debugPrint_Offset) + " ");
   }else if(debug == 2){
-	Serial.print(String(sample) + " ");
-	Serial.print(String(IR_Average_Estimated) + " ");
+	Serial.print(String(debugPrint_ScalingFaktor * sample + debugPrint_Offset) + " ");
+	Serial.print(String(debugPrint_ScalingFaktor * IR_Average_Estimated + debugPrint_Offset) + " ");
   }
   
   

@@ -68,9 +68,16 @@ class PulseDetector{
 
     int32_t mul16(int16_t x, int16_t y);
 
+	uint16_t debugPrint_Offset; //use as Offset value while printing out values for debug mode
+	float debugPrint_ScalingFaktor; //multiply values with this scaling faktor
+	
+	uint16_t beatDetected_MarkerHight;
+
   public:
 
     PulseDetector(uint8_t fir_enable, uint8_t movingAvg_intervalSize, uint8_t beatOnFallingEdge_p);
+	
+	void Set_DebugPrint_Faktors(uint16_t offset, float scalingFaktor, uint16_t zeroCrossing_MarkerHight);
 
     bool checkForPulse(uint16_t sample, float range_AC_Min, float range_AC_Max, uint8_t debug);
 
