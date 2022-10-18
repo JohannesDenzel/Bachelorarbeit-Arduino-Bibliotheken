@@ -210,7 +210,7 @@ int32_t PulseDetector::mul16(int16_t x, int16_t y)
 // range_AC_Min, range_AC_Max - range_AC_Min/Max are the minimum/maximum difference between the local minimum and local maximum of the ac signal
 // heart beat: range_AC_Min = 20, range_AC_Max = 1000
 // debug: if debug = 0, normal operation mode, if debug = 1 print ac Signal and actual calculated local min max values of the signal (Serial.print(ac_signal + " "))
-//debug = 2 - print ac signal and pulse sensend
+//debug = 2 - print raw signal and estimated dc
 //avg_min/max_BMP if bpm is in this range the bmp value is used to calculate the average. hearbeat min = 20, max = 255
 uint8_t PulseDetector::UpdatePulseDetector(uint16_t value, int16_t range_AC_Min, int16_t range_AC_Max, uint16_t avg_min_BPM, uint16_t avg_max_BPM, uint8_t debug){
   //heart beat detection
